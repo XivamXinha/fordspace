@@ -13,22 +13,24 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// ✅ Debug check (important)
+// ✅ Debug check
 if (!process.env.MONGO_URI) {
   console.log("❌ MONGO_URI missing in ENV");
 }
 
-// ✅ MongoDB Connection
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log("✅ MongoDB Connected"))
-.catch((err) => console.log("❌ MongoDB Error:", err));
+// ✅ MongoDB Connection (FINAL FIXED)
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ MongoDB Connected"))
+  .catch((err) => console.log("❌ MongoDB Error:", err));
 
 // ✅ Routes
 app.use("/api", authRoutes);
 app.use("/api/team", teamRoutes);
+
+// ✅ Default route (optional but useful)
+app.get("/", (req, res) => {
+  res.send("🚀 Backend is running...");
+});
 
 // ✅ Dynamic PORT (Render ke liye important)
 const PORT = process.env.PORT || 5000;
