@@ -7,21 +7,32 @@ const cors = require("cors");
 const authRoutes = require("./routes/auth");
 const teamRoutes = require("./routes/team");
 
-const app = express();   // 👈 YAHAN app create hota hai
+const app = express();
 
+// ✅ Middleware
 app.use(express.json());
 app.use(cors());
 
-mongoose.connect("mongodb://127.0.0.1:27017/fordspace")
-.then(()=>console.log("MongoDB Connected"))
-.catch(err=>console.log(err));
+// ✅ Debug check (important)
+if (!process.env.MONGO_URI) {
+  console.log("❌ MONGO_URI missing in ENV");
+}
 
+// ✅ MongoDB Connection
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log("✅ MongoDB Connected"))
+.catch((err) => console.log("❌ MongoDB Error:", err));
 
-// ROUTES
+// ✅ Routes
 app.use("/api", authRoutes);
 app.use("/api/team", teamRoutes);
 
+// ✅ Dynamic PORT (Render ke liye important)
+const PORT = process.env.PORT || 5000;
 
-app.listen(5000,()=>{
-  console.log("Server running on port 5000");
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });
